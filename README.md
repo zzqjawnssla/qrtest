@@ -77,3 +77,59 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+
+=================================================================================
+react-native-camera-kit 사용 전 기본 셋팅 (안하면 에러발생)
+
+npm install react-native-camera-kit --save 
+
+\android\app\src\main\AndroidMainfest.xml
+
+<!--    카메라 접근제어-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<!--    진동 접근제어-->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+\android\build.gradle
+minSDKVersion= 23으로 맞추기 (node-module\camera-kit의 version과 동일하게)
+kotlinVersion = "1.9.22" ->kotlin_version = "1.9.22" (camelCase바꾸기)
+
+dependencies {
+	classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+	-> classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+	(kotlin_version반영)
+}
+
+
+이후 \android\gradlew clean (초기화)
+
+디버깅 tool 
+1)
+yarn global add react-devtools
+
+npm install -g react-devtools
+
+(실행) react-devtools
+
+2)
+
+yarn add -D reactotron-react-native
+npm i --save-dev reactotron-react-native
+
+config.js 등 Reactotron설정파일 생성 (OOO.js)
+
+import Reactotron from "reactotron-react-native";
+
+Reactotron.configure() // controls connection & communication settings
+  .useReactNative() // add all built-in react native plugins
+  .connect(); // let's connect!
+
+
+index.js 혹은 App.js에 아래코드 추가
+if (__DEV__) {
+  require("./ReactotronConfig");
+}
+
+=================================================================================
