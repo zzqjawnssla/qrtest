@@ -1,66 +1,69 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useEffect} from 'react';
 import {
+  Button,
+  PermissionsAndroid,
   SafeAreaView,
-  ScrollView,
   StatusBar,
-  StyleSheet,
   Text,
   useColorScheme,
   View,
 } from 'react-native';
-
+import {NavigationContainer} from '@react-navigation/native';
 import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  createStackNavigator,
+  StackNavigationProp,
+} from '@react-navigation/stack';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {RecoilRoot} from 'recoil'; // Import RecoilRoot
+import Barcode from './src/Barcode';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+type RootStackParamList = {
+  Home: undefined;
+  Barcode: undefined;
+};
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
-function App(): React.JSX.Element {
+const Stack = createStackNavigator<RootStackParamList>();
+
+type HomeScreenProps = {
+  navigation: HomeScreenNavigationProp;
+};
+
+function HomeScreen({navigation}: HomeScreenProps) {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  async function requestCameraPermission() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Camera Permission',
+          message: 'This app requires access to your camera',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Camera permission granted');
+      } else {
+        console.log('Camera permission not granted');
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+  }
+
+  useEffect(() => {
+    (async () => {
+      await requestCameraPermission();
+    })();
+  }, []);
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -68,51 +71,25 @@ function App(): React.JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+      <View>
+        <Text>asdf</Text>
+        <Button title={'Scan'} onPress={() => navigation.navigate('Barcode')} />
+      </View>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+function App(): React.JSX.Element {
+  return (
+    <RecoilRoot>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Barcode" component={Barcode} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </RecoilRoot>
+  );
+}
 
 export default App;
