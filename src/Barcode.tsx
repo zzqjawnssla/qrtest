@@ -37,14 +37,18 @@ const Barcode = () => {
         ref={ref}
         cameraType={CameraType.Back}
         scanBarcode
-        // focusMode="on"
-        // zoomMode="on"
-        // ratioOverlay="16:9"
         showFrame={false}
         laserColor="rgba(255,0,0,0)"
         frameColor="rgba(255,0,0,0)"
         surfaceColor="rgba(255,0,0,0)"
         onReadCode={OnBarCodeRead}
+        cameraOptions={{
+          flashMode: 'auto', // Flash setting
+          focusMode: 'on', // Focus setting
+          zoomMode: 'on', // Zoom setting
+          ratioOverlay: '16:9', // Aspect ratio
+          barcodeScannerEnabled: true, // Enable barcode scanner
+        }}
       />
     </View>
   );

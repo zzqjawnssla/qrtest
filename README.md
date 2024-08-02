@@ -82,6 +82,13 @@ To learn more about React Native, take a look at the following resources:
 =================================================================================
 react-native-camera-kit 사용 전 기본 셋팅 (안하면 에러발생)
 
+프로젝트 최초 생성시 build에러 발생 시 아래 명령어로 gradlew 초기화
+(프로젝트 루트에서 실행)
+
+rd /s /q android\.gradle
+
+
+
 npm install react-native-camera-kit --save 
 
 \android\app\src\main\AndroidMainfest.xml
